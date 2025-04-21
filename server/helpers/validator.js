@@ -32,4 +32,4 @@ export const validateBlog=(req)=>{
   const {title , content , image , category } = req.body;
   if(!title) throw new Error("title is required");
   if(!content) throw new Error("content is required");
-}
+};

@@ -3,8 +3,9 @@ import Blog from "../models/Blog.js";
 import User from "../models/User.js";
 
 export const createBlog = async (req, res) => {
-  const { title, content, image, category } = req.body;
   try {
+    const { title, content, image, category } = req.body;
+
     validateBlog(req);
 
     const blog = new Blog({

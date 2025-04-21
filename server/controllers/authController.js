@@ -1,4 +1,4 @@
-import { validateLogin, validateRegister } from "../helpers/validator.js";
+import { validateLogin, validateRegister, validateUserinfo } from "../helpers/validator.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -181,6 +181,42 @@ export const changePassword = async(req , res)=>{
       success:false,
       error:error.message,
       message:"failed to changePassword"
+    })
+  }
+}
+
+export const updateProfile = async (req , res)=>{
+  try {
+    const {firstName , lastName , email , bio} = req.body;
+    const userId = req.user._id;
+    if(!userId){
+      return res.status(402).json({
+        success:false,
+        message:"userId can not undefiend"
+      })
+    }
+
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { firstName, lastName, email, bio },
+      { new: true }
+    );
+    
+
+    return res.status(200).json({
+      success:true,
+      message:"User updated successfully",
+      data : user
+    })
+
+    
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success:false,
+      error:error.message,
+      message:"failed to update profile"
     })
   }
 }
