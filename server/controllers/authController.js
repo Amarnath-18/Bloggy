@@ -1,26 +1,40 @@
-import { validateLogin, validateRegister, validateUserinfo } from "../helpers/validator.js";
+import { validateLogin, validateRegister } from "../helpers/validator.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import cloudinary from "../uploads/cloudinary.js";
 import Blog from "../models/Blog.js";
 dotenv.config();
+const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']; // allowed image types
 
 export const registerUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
     validateRegister(req);
+    const profilePic = req.files.profilePic;
+    if (!allowedTypes.includes(profilePic.mimetype)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+    if (profilePic.size > 1024 * 1024) {
+      return res.status(400).json({ message: "Image exceeds 1MB size limit" });
+    }
     const userExist = await User.findOne({ email });
     if (userExist) {
       return res.status(400).json({ message: "User already exist" });
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    const cloudinaryProfilePicUrl = await cloudinary.uploader.upload(
+      profilePic.tempFilePath,
+      { folder: "profilePics"  }
+    )
     const user = new User({
       firstName,
       lastName,
       email,
       password: hashedPassword,
+      profilePic: cloudinaryProfilePicUrl.secure_url,
     });
 
     await user.save();
@@ -31,6 +45,7 @@ export const registerUser = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         _id: user._id,
+        profilePic: user.profilePic,
       },
     });
   } catch (error) {

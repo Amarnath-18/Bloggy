@@ -1,17 +1,29 @@
 import { validateBlog } from "../helpers/validator.js";
 import Blog from "../models/Blog.js";
 import User from "../models/User.js";
+import cloudinary from "../uploads/cloudinary.js";
+const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']; // allowed image types
 
 export const createBlog = async (req, res) => {
   try {
-    const { title, content, image, category } = req.body;
-
+    const { title, content, category } = req.body;
+    const blogImage = req.files.blogImage;
+    if (blogImage.size > 1024 * 1024) {
+      return res.status(400).json({ message: "Image exceeds 1MB size limit" });
+    }
     validateBlog(req);
+    if (!allowedTypes.includes(blogImage.mimetype)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+    const cloudinaryBlogImageUrl = await cloudinary.uploader.upload(
+      blogImage.tempFilePath,
+      { folder: "blogImages" }
+    );
 
     const blog = new Blog({
       title,
       content,
-      image,
+      image:cloudinaryBlogImageUrl.secure_url,
       category,
       author: req.user._id,
     });

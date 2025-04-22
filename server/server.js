@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js"
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 
 
 dotenv.config();
@@ -21,6 +22,8 @@ app.use(
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(fileUpload({ useTempFiles: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
