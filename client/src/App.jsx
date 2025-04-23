@@ -9,20 +9,52 @@ import ViewCategoryBlogs from './components/ViewCategoryBlogs'
 import Body from './components/Body'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const App = () => {
   return (
-    <BrowserRouter >
+    <BrowserRouter>
       <Routes>
         <Route path='/' element={<Body/>}>
           <Route path='/' element={<Home/>} />
           <Route path='/viewBlogs' element={<ViewBlogs/>}/>
-          <Route path='/writeBlog' element={<WriteBlog/>}/>
-          <Route path='/viewProfile' element={<ViewProfile/>}/>
-          <Route path='/myBlogs' element={<ViewMyBlogs/>}/>
+          <Route 
+            path='/writeBlog' 
+            element={
+              <ProtectedRoute>
+                <WriteBlog/>
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path='/viewProfile' 
+            element={
+              <ProtectedRoute>
+                <ViewProfile/>
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path='/myBlogs'
+            element={
+              <ProtectedRoute>
+                <ViewMyBlogs/>
+              </ProtectedRoute>
+            }
+          />
           <Route path='/category/:category' element={<ViewCategoryBlogs/>}/>
-          <Route path='/login' element={<Login/>} />
-          <Route path='/register' element={<SignUp/>} />
+          <Route 
+            path='/login' 
+            element={
+                <Login/>
+            } 
+          />
+          <Route 
+            path='/register' 
+            element={
+                <SignUp/>
+            } 
+          />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -30,3 +62,5 @@ const App = () => {
 }
 
 export default App
+
+

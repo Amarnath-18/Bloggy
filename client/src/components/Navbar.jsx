@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { Button } from './ui/button'
 import { 
   LogInIcon, 
@@ -9,13 +10,23 @@ import {
   MonitorIcon, 
   HeartIcon, 
   PlaneIcon, 
-  GraduationCapIcon 
+  GraduationCapIcon,
+  PenLine,
+  UserCircle,
+  LogOut,
+  FileText
 } from 'lucide-react'
+import api from '@/lib/axios'
+import { setUser } from '@/redux/UserSlice'
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const location = useLocation()
-
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.user)
+  
   const navItems = [
     { name: 'Home', path: '/', icon: <HomeIcon className="size-4" /> },
     { name: 'Tech', path: '/category/tech', icon: <MonitorIcon className="size-4" /> },
@@ -23,6 +34,16 @@ const Navbar = () => {
     { name: 'Travel', path: '/category/travel', icon: <PlaneIcon className="size-4" /> },
     { name: 'Education', path: '/category/education', icon: <GraduationCapIcon className="size-4" /> },
   ]
+
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout')
+      dispatch(setUser(null))
+      navigate('/')
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
 
   const isActivePath = (path) => location.pathname === path
 
@@ -57,17 +78,69 @@ const Navbar = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <Link to="/login">
-                <Button variant="outline" className="gap-2">
-                  <LogInIcon className="size-4" />
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button className="gap-2">
-                  Get Started
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/writeBlog">
+                    <Button className="gap-2">
+                      <PenLine className="size-4" />
+                      Write
+                    </Button>
+                  </Link>
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      className="gap-2"
+                      onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                    >
+                      <UserCircle className="size-5" />
+                    </Button>
+                    {isProfileMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-48 py-2 bg-background rounded-md shadow-lg border">
+                        <Link
+                          to="/viewProfile"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                        >
+                          <UserCircle className="size-4" />
+                          View Profile
+                        </Link>
+                        <Link
+                          to="/myBlogs"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                        >
+                          <FileText className="size-4" />
+                          My Blogs
+                        </Link>
+                        <button
+                          onClick={() => {
+                            handleLogout()
+                            setIsProfileMenuOpen(false)
+                          }}
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent w-full"
+                        >
+                          <LogOut className="size-4" />
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="outline" className="gap-2">
+                      <LogInIcon className="size-4" />
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button className="gap-2">
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -104,17 +177,53 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 px-4 pt-4 border-t">
-                <Link to="/login">
-                  <Button variant="outline" className="w-full gap-2">
-                    <LogInIcon className="size-4" />
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button className="w-full gap-2">
-                    Get Started
-                  </Button>
-                </Link>
+                {user ? (
+                  <>
+                    <Link to="/writeBlog" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button className="w-full gap-2">
+                        <PenLine className="size-4" />
+                        Write
+                      </Button>
+                    </Link>
+                    <Link to="/viewProfile" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full gap-2">
+                        <UserCircle className="size-4" />
+                        View Profile
+                      </Button>
+                    </Link>
+                    <Link to="/myBlogs" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full gap-2">
+                        <FileText className="size-4" />
+                        My Blogs
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="outline"
+                      className="w-full gap-2"
+                      onClick={() => {
+                        handleLogout()
+                        setIsMobileMenuOpen(false)
+                      }}
+                    >
+                      <LogOut className="size-4" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login">
+                      <Button variant="outline" className="w-full gap-2">
+                        <LogInIcon className="size-4" />
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link to="/register">
+                      <Button className="w-full gap-2">
+                        Get Started
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

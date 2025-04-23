@@ -1,7 +1,7 @@
 import Blog from "../models/Blog.js";
 import User from "../models/User.js";
 
-export const saveProfilePic = async(req , res)=>{
+export const updateProfilePic = async(req , res)=>{
     try {
         const {profilePic} = req.body;
         const userId = req.user._id;
@@ -32,7 +32,7 @@ export const saveProfilePic = async(req , res)=>{
     }
 }
 
-export const saveBlogImage = async(req , res)=>{
+export const updateBlogImage = async(req , res)=>{
     try {
         const {blogImage , blogId} = req.body;
         if(!blogId || !blogImage) return res.status(400).json({

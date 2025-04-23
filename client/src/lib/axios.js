@@ -8,14 +8,23 @@ const api = axios.create({
   },
 });
 
+
+export const checkAuthStatus = async () => {
+  try {
+    const response = await api.get('/auth/me');
+    return response.data.user;
+  } catch (error) {
+    return null;
+  }
+};
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      window.location.href = '/login';
-    }
     return Promise.reject(error);
   }
 );
 
 export default api;
+
+

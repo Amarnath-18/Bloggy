@@ -9,7 +9,7 @@ const WriteBlog = () => {
     title: '',
     content: '',
     category: 'Other',
-    image: null
+    blogImage: null
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -30,7 +30,7 @@ const WriteBlog = () => {
     }
     setFormData(prev => ({
       ...prev,
-      image: file
+      blogImage: file
     }))
     setError('')
   }
@@ -41,26 +41,21 @@ const WriteBlog = () => {
     setError('')
 
     try {
-      let imageUrl = ''
-      if (formData.image) {
-        const imageFormData = new FormData()
-        imageFormData.append('image', formData.image)
-        const { data } = await api.put('/upload/blogImage', imageFormData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        })
-        imageUrl = data.url
+      const formDataToSend = new FormData()
+      formDataToSend.append('title', formData.title)
+      formDataToSend.append('content', formData.content)
+      formDataToSend.append('category', formData.category)
+      if (formData.blogImage) {
+        formDataToSend.append('blogImage', formData.blogImage)
       }
 
-      await api.post('/blogs', {
-        title: formData.title,
-        content: formData.content,
-        category: formData.category,
-        image: imageUrl
+      await api.post('/blogs', formDataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       })
 
       navigate('/myBlogs')
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      setError(err.response?.data?.message || 'Failed to create blog')
     } finally {
       setLoading(false)
     }

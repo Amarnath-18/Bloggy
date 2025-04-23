@@ -20,7 +20,7 @@ const ViewBlogs = () => {
       const response = await api.get('/blogs', {
         params: {
           page,
-          limit: 9, // Number of blogs per page
+          limit: 9,
         }
       })
       
@@ -30,7 +30,7 @@ const ViewBlogs = () => {
         } else {
           setBlogs(prev => [...prev, ...response.data.data])
         }
-        setHasMore(response.data.data.length === 9) // If less than limit, no more pages
+        setHasMore(response.data.data.length === 9)
       } else {
         setError(response.data.message)
       }
@@ -39,11 +39,7 @@ const ViewBlogs = () => {
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleLoadMore = () => {
-    setPage(prev => prev + 1)
-  }
+  }  
 
   if (error) {
     return (
@@ -56,6 +52,21 @@ const ViewBlogs = () => {
     )
   }
 
+  if (loading || blogs.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  console.log(blogs[0]?.author?.firstName);
+
+
+  const handleLoadMore = () => {
+    setPage(prev => prev + 1)
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Latest Blogs</h1>
@@ -66,10 +77,10 @@ const ViewBlogs = () => {
             key={blog._id} 
             className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
           >
-            {blog.image && (
+            {blog?.image && (
               <img 
-                src={blog.image} 
-                alt={blog.title} 
+                src={blog?.image} 
+                alt={blog?.title} 
                 className="w-full h-48 object-cover"
                 loading="lazy"
               />
@@ -77,34 +88,34 @@ const ViewBlogs = () => {
             <div className="p-4">
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <span className="bg-primary/10 text-primary px-2 py-1 rounded">
-                  {blog.category}
+                  {blog?.category}
                 </span>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {new Date(blog.createdAt).toLocaleDateString()}
+                  {new Date(blog?.createdAt).toLocaleDateString()}
                 </div>
               </div>
               
               <h2 className="text-xl font-semibold mb-2 text-foreground">
-                {blog.title}
+                {blog?.title}
               </h2>
               <p className="text-muted-foreground mb-4 line-clamp-3">
-                {blog.content}
+                {blog?.content}
               </p>
 
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4" />
-                  {blog.author.firstName} {blog.author.lastName}
+                  {blog?.author?.firstName} {blog?.author?.lastName}
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1">
                     <ThumbsUp className="w-4 h-4" />
-                    {blog.likes.length}
+                    {blog?.likes?.length}
                   </div>
                   <div className="flex items-center gap-1">
                     <MessageCircle className="w-4 h-4" />
-                    {blog.comments.length}
+                    {blog?.comments?.length}
                   </div>
                 </div>
               </div>

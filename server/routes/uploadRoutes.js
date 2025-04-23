@@ -1,9 +1,9 @@
 import express from "express"
 import { protectRoute } from "../middlewares/authMiddleware.js";
-import { saveBlogImage, saveProfilePic } from "../controllers/uploadController.js";
+import {  updateBlogImage, updateProfilePic } from "../controllers/uploadController.js";
 const router = express.Router();
 
-router.put("/profilePic" , protectRoute , saveProfilePic);
-router.put("/blogImage"  , protectRoute , saveBlogImage);
+router.put("/profilePic" , protectRoute , updateProfilePic);
+router.put("/blogImage"  , protectRoute , updateBlogImage);
 
 export default router;

@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { cn } from '@/lib/utils'
 import api from '@/lib/axios'
 import { LogInIcon } from 'lucide-react'
+import { setUser } from '@/redux/UserSlice'
 
 const Login = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -27,8 +31,8 @@ const Login = () => {
     setError('')
 
     try {
-      const user = await api.post('/auth/login', formData)
-      console.log(user.data)
+      const response = await api.post('/auth/login', formData)
+      dispatch(setUser(response.data.user))
       navigate('/')
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to login')
