@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Calendar, MessageCircle, ThumbsUp, Trash2, Edit } from 'lucide-react'
 import api from '@/lib/axios'
 import { useSelector } from 'react-redux'
-import EditUserblog from './EditUserblog'
 
 const ViewMyBlogs = () => {
   const [blogs, setBlogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const user = useSelector(state => state.user.user)
-  const [editingBlog, setEditingBlog] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchMyBlogs()
@@ -43,12 +42,6 @@ const ViewMyBlogs = () => {
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to delete blog')
     }
-  }
-
-  const handleUpdateBlog = (updatedBlog) => {
-    setBlogs(blogs.map(blog => 
-      blog._id === updatedBlog._id ? updatedBlog : blog
-    ))
   }
 
   if (error) {
@@ -154,17 +147,6 @@ const ViewMyBlogs = () => {
             </article>
           ))}
         </div>
-      )}
-
-      {editingBlog && (
-        <EditUserblog
-          blog={editingBlog}
-          onClose={() => setEditingBlog(null)}
-          onUpdate={(updatedBlog) => {
-            handleUpdateBlog(updatedBlog)
-            setEditingBlog(null)
-          }}
-        />
       )}
     </div>
   )

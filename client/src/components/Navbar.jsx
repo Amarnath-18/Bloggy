@@ -69,8 +69,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Bloggy
+            <h1 className="text-3xl pb-1 font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              BlogHunt
             </h1>
           </Link>
 

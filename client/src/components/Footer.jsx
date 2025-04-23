@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Bloggy
+                BlogHunt
               </h2>
             </Link>
             <p className="text-sm text-muted-foreground">
@@ -109,7 +109,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>© {currentYear} Bloggy. All rights reserved.</p>
+          <p>© {currentYear} BlogHunt. All rights reserved.</p>
         </div>
       </div>
     </footer>

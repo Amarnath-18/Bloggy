@@ -76,7 +76,7 @@ const ViewSingleBlog = () => {
             <span>{blog.author?.firstName} {blog.author?.lastName}</span>
           </Link>
           <span>•</span>
-          <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+          <span>{new Date(blog.createdAt).toLocaleDateString('en-GB')}</span>
           <span>•</span>
           <span className="bg-secondary px-2 py-1 rounded">{blog.category}</span>
         </div>
@@ -143,7 +143,7 @@ const ViewSingleBlog = () => {
                   {comment.user?.firstName} {comment.user?.lastName}
                 </span>
                 <span className="text-muted-foreground">
-                  {new Date(comment.createdAt).toLocaleDateString()}
+                  {new Date(comment.createdAt).toLocaleDateString('en-GB')}
                 </span>
               </div>
               <p>{comment.text}</p>

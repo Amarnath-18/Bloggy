@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import api from '@/lib/axios'
 import { cn } from '@/lib/utils'
@@ -12,7 +12,7 @@ const EditBlog = () => {
     category: '',
     image: ''
   })
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -27,13 +27,12 @@ const EditBlog = () => {
           image: blog.image
         })
       } catch (err) {
-        setError('Failed to fetch blog details')
-      } finally {
-        setLoading(false)
+        setError('Failed to fetch blog')
+        navigate('/myBlogs')
       }
     }
     fetchBlog()
-  }, [id])
+  }, [id, navigate])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -80,18 +79,10 @@ const EditBlog = () => {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Edit Blog</h1>
-      
+    <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <h1 className="text-3xl font-bold mb-8">Edit Blog</h1>
+
       {error && (
         <div className="bg-destructive/15 text-destructive p-3 rounded-md mb-4">
           {error}
@@ -126,6 +117,7 @@ const EditBlog = () => {
               "w-full p-2 border rounded-md",
               "focus:outline-none focus:ring-2 focus:ring-primary"
             )}
+            required
           >
             <option value="Tech">Tech</option>
             <option value="Life">Life</option>
@@ -199,3 +191,4 @@ const EditBlog = () => {
 }
 
 export default EditBlog
+
