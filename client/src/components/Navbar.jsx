@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button } from './ui/button'
+import { Button } from '@/components/ui/button'
 import { 
   LogInIcon, 
   MenuIcon, 
@@ -16,6 +16,7 @@ import {
   LogOut,
   FileText
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import api from '@/lib/axios'
 import { setUser } from '@/redux/UserSlice'
 
@@ -29,10 +30,10 @@ const Navbar = () => {
   
   const navItems = [
     { name: 'Home', path: '/', icon: <HomeIcon className="size-4" /> },
-    { name: 'Tech', path: '/category/tech', icon: <MonitorIcon className="size-4" /> },
-    { name: 'Life', path: '/category/life', icon: <HeartIcon className="size-4" /> },
-    { name: 'Travel', path: '/category/travel', icon: <PlaneIcon className="size-4" /> },
-    { name: 'Education', path: '/category/education', icon: <GraduationCapIcon className="size-4" /> },
+    { name: 'Tech', path: '/category/Tech', icon: <MonitorIcon className="size-4" /> },
+    { name: 'Life', path: '/category/Life', icon: <HeartIcon className="size-4" /> },
+    { name: 'Travel', path: '/category/Travel', icon: <PlaneIcon className="size-4" /> },
+    { name: 'Education', path: '/category/Education', icon: <GraduationCapIcon className="size-4" /> },
   ]
 
   const handleLogout = async () => {
@@ -46,6 +47,21 @@ const Navbar = () => {
   }
 
   const isActivePath = (path) => location.pathname === path
+
+  const ProfileIcon = ({ className }) => {
+    if (user?.profilePic) {
+      return (
+        <div className={cn("w-8 h-8 rounded-full overflow-hidden", className)}>
+          <img 
+            src={user.profilePic} 
+            alt="Profile" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )
+    }
+    return <UserCircle className={className} />
+  }
 
   return (
     <nav className="w-full border-b shadow-sm sticky top-0 z-50 bg-background/80 backdrop-blur-md">
@@ -92,10 +108,21 @@ const Navbar = () => {
                       className="gap-2"
                       onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                     >
-                      <UserCircle className="size-5" />
+                      <ProfileIcon className="size-8" />
                     </Button>
                     {isProfileMenuOpen && (
                       <div className="absolute right-0 mt-2 w-48 py-2 bg-background rounded-md shadow-lg border">
+                        <div className="px-4 py-2 border-b">
+                          <div className="flex items-center gap-2">
+                            <ProfileIcon className="size-8" />
+                            <div className="text-sm">
+                              <div className="font-medium">{user.firstName} {user.lastName}</div>
+                              <div className="text-muted-foreground text-xs truncate">
+                                {user.email}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <Link
                           to="/viewProfile"
                           className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent"
@@ -103,6 +130,14 @@ const Navbar = () => {
                         >
                           <UserCircle className="size-4" />
                           View Profile
+                        </Link>
+                        <Link
+                          to="/updateProfile"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                        >
+                          <PenLine className="size-4" />
+                          Update Profile
                         </Link>
                         <Link
                           to="/myBlogs"
@@ -160,6 +195,17 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t">
+            <div className="px-4 mb-4">
+              <div className="flex items-center gap-3">
+                <ProfileIcon className="size-10" />
+                <div>
+                  <div className="font-medium">{user.firstName} {user.lastName}</div>
+                  <div className="text-sm text-muted-foreground truncate">
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
                 <Link
@@ -189,6 +235,12 @@ const Navbar = () => {
                       <Button variant="outline" className="w-full gap-2">
                         <UserCircle className="size-4" />
                         View Profile
+                      </Button>
+                    </Link>
+                    <Link to="/updateProfile" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full gap-2">
+                        <PenLine className="size-4" />
+                        Update Profile
                       </Button>
                     </Link>
                     <Link to="/myBlogs" onClick={() => setIsMobileMenuOpen(false)}>

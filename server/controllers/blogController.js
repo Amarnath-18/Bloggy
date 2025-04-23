@@ -2,7 +2,7 @@ import { validateBlog } from "../helpers/validator.js";
 import Blog from "../models/Blog.js";
 import User from "../models/User.js";
 import cloudinary from "../uploads/cloudinary.js";
-const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']; // allowed image types
+const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
 export const createBlog = async (req, res) => {
   try {
@@ -46,8 +46,7 @@ export const createBlog = async (req, res) => {
 
 export const getAllBlogs = async (req, res) => {
   try {
-    const { category } = req.query;
-
+    const { category } = req.params;
     const filter = category ? { category } : {};
     const blogs = await Blog.find(filter)
       .populate("author", "firstName lastName email")
@@ -215,7 +214,6 @@ export const toggleLikeBlog = async (req, res) => {
 
     await blog.save();
     
-    // Fetch the updated blog with populated author
     const updatedBlog = await Blog.findById(blogId).populate(
       "author",
       "firstName lastName email"
@@ -264,7 +262,6 @@ export const addCommentsInBlog = async (req, res) => {
     blog.comments.push(comment);
     await blog.save();
 
-    // Fetch the updated blog with populated author and comments.user
     const updatedBlog = await Blog.findById(blogId)
       .populate("author", "firstName lastName email")
       .populate("comments.user", "firstName lastName");

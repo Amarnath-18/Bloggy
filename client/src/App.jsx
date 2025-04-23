@@ -11,6 +11,8 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 import ProtectedRoute from './components/ProtectedRoute'
 import ViewSingleBlog from './components/ViewSingleBlog'
+import UpdateProfileInfo from './components/UpdateProfileInfo'
+import EditBlog from './components/EditBlog'
 
 const App = () => {
   return (
@@ -27,14 +29,8 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route 
-            path='/viewProfile' 
-            element={
-              <ProtectedRoute>
-                <ViewProfile/>
-              </ProtectedRoute>
-            }
-          />
+          <Route path='/viewProfile' element={<ProtectedRoute><ViewProfile /></ProtectedRoute>} />
+          <Route path='/viewProfile/:id' element={<ViewProfile />} />
           <Route 
             path='/myBlogs'
             element={
@@ -57,6 +53,22 @@ const App = () => {
             } 
           />
           <Route path='/viewBlog/:id' element={<ViewSingleBlog/>}/>
+          <Route 
+            path='/updateProfile' 
+            element={
+              <ProtectedRoute>
+                <UpdateProfileInfo />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path='/editBlog/:id' 
+            element={
+              <ProtectedRoute>
+                <EditBlog />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -64,5 +76,8 @@ const App = () => {
 }
 
 export default App
+
+
+
 
 

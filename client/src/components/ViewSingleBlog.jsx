@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import api from '@/lib/axios'
 import { cn } from '@/lib/utils'
+import { UserCircle } from 'lucide-react'
 
 const ViewSingleBlog = () => {
   const { id } = useParams()
@@ -60,7 +61,20 @@ const ViewSingleBlog = () => {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-4">{blog.title}</h1>
         <div className="flex items-center gap-4 text-muted-foreground">
-          <span>By {blog.author?.firstName} {blog.author?.lastName}</span>
+          <Link to={`/viewProfile/${blog.author?._id}`} className="flex items-center gap-2">
+            {blog.author?.profilePic ? (
+              <img 
+                src={blog.author?.profilePic} 
+                alt="Author" 
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <UserCircle className="w-6 h-6" />
+              </div>
+            )}
+            <span>{blog.author?.firstName} {blog.author?.lastName}</span>
+          </Link>
           <span>•</span>
           <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
           <span>•</span>
@@ -86,10 +100,10 @@ const ViewSingleBlog = () => {
       <button
         onClick={handleLike}
         disabled={!user}
-        className={cn(
+        className={cn("cursor-pointer",
           "flex items-center gap-2 px-4 py-2 rounded",
           "bg-primary text-primary-foreground",
-          "disabled:opacity-50 disabled:cursor-not-allowed"
+          "disabled:opacity-50 "
         )}
       >
         {blog.likes?.includes(user?._id) ? 'Unlike' : 'Like'} 
@@ -112,7 +126,7 @@ const ViewSingleBlog = () => {
             />
             <button 
               type="submit"
-              className="bg-primary text-primary-foreground px-4 py-2 rounded"
+              className="bg-primary text-primary-foreground px-4 py-2 cursor-pointer rounded"
               disabled={!comment.trim()}
             >
               Post Comment
