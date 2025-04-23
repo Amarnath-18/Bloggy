@@ -31,7 +31,7 @@ const userSchema =new mongoose.Schema({
     },
     bio:{
         type:String,
-        minlength:100
+        minlength:10,
     },
     joinedAt:{
         type:Date,
