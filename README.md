@@ -1,54 +1,97 @@
-# Bloggy - Blog Platform API
+# Bloggy - Full Stack Blog Platform
 
-A full-featured RESTful API for a blogging platform built with Node.js, Express, and MongoDB. Enables users to create, manage, and interact with blog posts through a secure and scalable backend.
+A full-featured blog platform built with MERN stack (MongoDB, Express, React, Node.js). Features a modern React frontend with Vite and a secure RESTful API backend.
+
+## Project Structure
+
+```
+bloggy/
+├── client/          # React frontend
+└── server/          # Node.js backend
+```
 
 ## Features
 
-### User Management
-- User registration and authentication
-- JWT-based authorization
-- Profile management with Cloudinary image upload
+### User Features
+- User registration and authentication with JWT
+- Profile management with image upload
 - Password change functionality
-- User bio and profile information
+- Profile information updates
+- Responsive design with Tailwind CSS
 
-### Blog Management
+### Blog Features
 - Create, read, update, and delete blog posts
-- Image upload with Cloudinary (max 1MB, supports jpeg/png/webp)
+- Image upload support (max 1MB, jpeg/png/webp)
 - Category-based organization
-- Rich text content support
-- Post metadata and timestamps
+- Rich text content
+- Like/Unlike functionality
+- Comment system
+- Category filtering
 
-### Interaction Features
-- Like/Unlike blog posts
-- Comment system with CRUD operations
-- User-specific blog feeds
-- Category-based filtering
-
-### Security
+### Technical Features
 - Protected routes using JWT
-- Password hashing with bcrypt
-- Secure cookie handling
-- Input validation and sanitization
-- CORS enabled for localhost:3000
+- Cloudinary integration for image hosting
+- Redux Toolkit for state management
+- Modern UI components with shadcn/ui
+- Responsive mobile-first design
 
 ## Tech Stack
 
-### Backend
-- Node.js
-- Express.js (v5.1.0)
-- MongoDB with Mongoose (v8.13.2)
-- JSON Web Tokens (v9.0.2)
-- bcryptjs (v3.0.2)
+### Frontend (Client)
+- React 19.0.0 with Vite
+- Redux Toolkit for state management
+- React Router v7
+- Tailwind CSS
+- Axios for API calls
+- shadcn/ui components
 
-### Storage & Media
+### Backend (Server)
+- Node.js with Express 5.1.0
+- MongoDB with Mongoose 8.13.2
+- JWT for authentication
 - Cloudinary for image hosting
-- MongoDB Atlas for database
+- Express-fileupload for file handling
 
-### Development Tools
-- nodemon (v3.1.9) for development
-- dotenv (v16.5.0) for environment management
-- cors (v2.8.5) for Cross-Origin Resource Sharing
-- express-fileupload (v1.5.1) for handling file uploads
+## Getting Started
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd bloggy
+```
+
+2. Install dependencies:
+```bash
+# Install server dependencies
+cd server
+npm install
+
+# Install client dependencies
+cd ../client
+npm install
+```
+
+3. Environment Configuration:
+
+Create `.env` in server directory:
+```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+PORT=5000
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
+
+4. Start development servers:
+
+```bash
+# Start backend server (from server directory)
+npm run dev
+
+# Start frontend dev server (from client directory)
+npm run dev
+```
 
 ## API Endpoints
 
@@ -78,87 +121,15 @@ A full-featured RESTful API for a blogging platform built with Node.js, Express,
 - `PUT /api/upload/profilePic` - Upload profile picture (protected)
 - `PUT /api/upload/blogImage` - Upload blog image (protected)
 
-## Installation & Setup
+## Security Features
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd bloggy
-```
-
-2. Install dependencies:
-```bash
-cd server
-npm install
-```
-
-3. Environment Configuration:
-Create `.env` file in the server directory with:
-```env
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-PORT=5000
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-```
-
-4. Start development server:
-```bash
-npm run dev
-```
-
-## Database Schemas
-
-### Blog Schema
-```javascript
-{
-  title: String,        // required, 5-100 chars
-  content: String,      // required, 5-1000 chars
-  image: String,        // optional, Cloudinary URL
-  category: String,     // ["Tech", "Life", "Travel", "Education", "Other"]
-  author: ObjectId,     // reference to User
-  likes: [ObjectId],    // array of User references
-  comments: [{
-    user: ObjectId,     // reference to User
-    text: String,
-    createdAt: Date
-  }],
-  timestamps: true      // createdAt, updatedAt
-}
-```
-
-### User Schema
-```javascript
-{
-  firstName: String,    // required, min 3 chars
-  lastName: String,     // required, min 3 chars
-  email: String,        // required, unique
-  password: String,     // required, min 6 chars
-  profilePic: String,   // optional, Cloudinary URL
-  bio: String,         // optional, min 100 chars
-  joinedAt: Date       // default: Date.now
-}
-```
-
-## Error Handling
-
-The API implements comprehensive error handling:
-- Validation errors for invalid inputs
-- Authentication errors for unauthorized access
-- Resource not found errors (404)
-- Server errors (500) with detailed error messages
-- Image upload validation (size and type)
-
-## Security Measures
-
-- Password hashing using bcrypt
 - JWT-based authentication
 - Protected routes with middleware
-- Input validation and sanitization
+- Password hashing with bcrypt
 - Secure cookie handling
-- CORS configuration for frontend access
-- File upload restrictions and validation
+- CORS configuration
+- File upload restrictions
+- Input validation
 
 ## Contributing
 
