@@ -13,6 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import ViewSingleBlog from './components/ViewSingleBlog'
 import UpdateProfileInfo from './components/UpdateProfileInfo'
 import EditBlog from './components/EditBlog'
+import UpdatePassword from './components/UpdatePassword'
 
 const App = () => {
   return (
@@ -69,6 +70,14 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route 
+            path='/update-password' 
+            element={
+              <ProtectedRoute>
+                <UpdatePassword />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -76,6 +85,7 @@ const App = () => {
 }
 
 export default App
+
 
 
 

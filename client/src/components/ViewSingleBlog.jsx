@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import api from '@/lib/axios'
 import { cn } from '@/lib/utils'
 import { UserCircle } from 'lucide-react'
+import ConfirmationDialog from '@/components/ui/ConfirmationDialog'
 
 const ViewSingleBlog = () => {
   const { id } = useParams()
@@ -11,7 +12,12 @@ const ViewSingleBlog = () => {
   const [blog, setBlog] = useState(null)
   const [error, setError] = useState(null)
   const [comment, setComment] = useState('')
+  const [editingComment, setEditingComment] = useState(null)
   const user = useSelector(state => state.user.user)
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    commentId: null
+  })
   
   useEffect(() => {
     const fetchBlog = async () => {
@@ -49,6 +55,60 @@ const ViewSingleBlog = () => {
     } catch (err) {
       console.error('Failed to add comment:', err)
     }
+  }
+
+  const handleEditComment = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await api.put(`/blogs/${id}/comment/${editingComment._id}`, {
+        text: comment
+      })
+      if (response.data.success) {
+        setBlog(prev => ({
+          ...prev,
+          comments: prev.comments.map(c => 
+            c._id === editingComment._id ? { ...c, text: comment } : c
+          )
+        }))
+        setComment('')
+        setEditingComment(null)
+      }
+    } catch (err) {
+      console.error('Failed to edit comment:', err)
+    }
+  }
+
+  const openDeleteConfirmation = (commentId) => {
+    setConfirmDialog({
+      isOpen: true,
+      commentId
+    })
+  }
+
+  const closeDeleteConfirmation = () => {
+    setConfirmDialog({
+      isOpen: false,
+      commentId: null
+    })
+  }
+
+  const handleDeleteComment = async () => {
+    try {
+      const response = await api.delete(`/blogs/${id}/comment/${confirmDialog.commentId}`)
+      if (response.data.success) {
+        setBlog(prev => ({
+          ...prev,
+          comments: prev.comments.filter(c => c._id !== confirmDialog.commentId)
+        }))
+      }
+    } catch (err) {
+      console.error('Failed to delete comment:', err)
+    }
+  }
+
+  const startEditingComment = (comment) => {
+    setEditingComment(comment)
+    setComment(comment.text)
   }
 
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>
@@ -116,21 +176,35 @@ const ViewSingleBlog = () => {
         
         {/* Comment Form */}
         {user && (
-          <form onSubmit={handleComment} className="mb-8">
+          <form onSubmit={editingComment ? handleEditComment : handleComment} className="mb-8">
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Add a comment..."
+              placeholder={editingComment ? "Edit your comment..." : "Add a comment..."}
               className="w-full p-2 border rounded-lg mb-2"
               rows="3"
             />
-            <button 
-              type="submit"
-              className="bg-primary text-primary-foreground px-4 py-2 cursor-pointer rounded"
-              disabled={!comment.trim()}
-            >
-              Post Comment
-            </button>
+            <div className="flex gap-2">
+              <button 
+                type="submit"
+                className="bg-primary text-primary-foreground px-4 py-2 cursor-pointer rounded"
+                disabled={!comment.trim()}
+              >
+                {editingComment ? 'Update Comment' : 'Post Comment'}
+              </button>
+              {editingComment && (
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setEditingComment(null)
+                    setComment('')
+                  }}
+                  className="bg-secondary text-secondary-foreground px-4 py-2 cursor-pointer rounded"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
         )}
 
@@ -138,19 +212,49 @@ const ViewSingleBlog = () => {
         <div className="space-y-4">
           {blog.comments?.map((comment) => (
             <div key={comment._id} className="border-b pb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-semibold">
-                  {comment.user?.firstName} {comment.user?.lastName}
-                </span>
-                <span className="text-muted-foreground">
-                  {new Date(comment.createdAt).toLocaleDateString('en-GB')}
-                </span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">
+                    {comment.user?.firstName} {comment.user?.lastName}
+                  </span>
+                  <span className="text-muted-foreground">
+                    {new Date(comment.createdAt).toLocaleDateString('en-GB')}
+                  </span>
+                </div>
+                {user?._id === comment.user?._id && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => startEditingComment(comment)}
+                      className="text-blue-500 hover:text-blue-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => openDeleteConfirmation(comment._id)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
               <p>{comment.text}</p>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={closeDeleteConfirmation}
+        onConfirm={handleDeleteComment}
+        title="Delete Comment"
+        message="Are you sure you want to delete this comment? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
     </div>
   )
 }

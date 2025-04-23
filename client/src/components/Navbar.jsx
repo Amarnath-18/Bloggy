@@ -14,7 +14,8 @@ import {
   PenLine,
   UserCircle,
   LogOut,
-  FileText
+  FileText,
+  KeyIcon
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import api from '@/lib/axios'
@@ -140,6 +141,14 @@ const Navbar = () => {
                           Update Profile
                         </Link>
                         <Link
+                          to="/update-password"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                        >
+                          <KeyIcon className="size-4" />
+                          Update Password
+                        </Link>
+                        <Link
                           to="/myBlogs"
                           className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent"
                           onClick={() => setIsProfileMenuOpen(false)}
@@ -241,6 +250,12 @@ const Navbar = () => {
                       <Button variant="outline" className="w-full gap-2">
                         <PenLine className="size-4" />
                         Update Profile
+                      </Button>
+                    </Link>
+                    <Link to="/update-password" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full gap-2">
+                        <KeyIcon className="size-4" />
+                        Update Password
                       </Button>
                     </Link>
                     <Link to="/myBlogs" onClick={() => setIsMobileMenuOpen(false)}>
