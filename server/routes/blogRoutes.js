@@ -10,7 +10,7 @@ router.get("/:id" , getSingleBlog);
 router.put("/:id" , protectRoute , updateBlog)
 router.delete("/:id" , protectRoute , deleteBlog);
 router.put("/like/:id" , protectRoute , toggleLikeBlog);
-router.post("/:id/comment" , protectRoute , addCommentsInBlog);
+router.post("/comment/:id/" , protectRoute , addCommentsInBlog);
 router.delete("/:blogId/comment/:commentId", protectRoute, deleteCommentFromBlog);
 router.put("/:blogId/comment/:commentId", protectRoute, editCommentInBlog);
 router.get("/users/:userId" , getBlogByUser);

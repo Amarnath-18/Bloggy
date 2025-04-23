@@ -78,10 +78,9 @@ export const getSingleBlog = async (req, res) => {
       });
     }
 
-    const blog = await Blog.findById(blogId).populate(
-      "author",
-      "firstName lastName email"
-    );
+    const blog = await Blog.findById(blogId)
+      .populate("author", "firstName lastName email")
+      .populate("comments.user", "firstName lastName");
 
     if (!blog) {
       res.status(400).json({
@@ -203,24 +202,30 @@ export const toggleLikeBlog = async (req, res) => {
       });
     }
 
-    let message = ""; // 🔧 Declare here
-
+    let message = "";
     const index = blog.likes.indexOf(userId);
 
     if (index > -1) {
-      // Already liked → unlike
       blog.likes.splice(index, 1);
       message = "Blog unliked";
     } else {
-      // Not liked → like
       blog.likes.push(userId);
       message = "Blog liked";
     }
 
     await blog.save();
-    res
-      .status(200)
-      .json({ success: true, message, likesCount: blog.likes.length });
+    
+    // Fetch the updated blog with populated author
+    const updatedBlog = await Blog.findById(blogId).populate(
+      "author",
+      "firstName lastName email"
+    );
+
+    res.status(200).json({ 
+      success: true, 
+      message, 
+      data: updatedBlog 
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -259,10 +264,15 @@ export const addCommentsInBlog = async (req, res) => {
     blog.comments.push(comment);
     await blog.save();
 
+    // Fetch the updated blog with populated author and comments.user
+    const updatedBlog = await Blog.findById(blogId)
+      .populate("author", "firstName lastName email")
+      .populate("comments.user", "firstName lastName");
+
     res.status(200).json({
       success: true,
       message: "Comment added successfully",
-      comments: blog.comments,
+      data: updatedBlog
     });
   } catch (error) {
     console.error(error);

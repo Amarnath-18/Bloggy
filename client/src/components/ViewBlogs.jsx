@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, User, MessageCircle, ThumbsUp } from 'lucide-react'
 import api from '@/lib/axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { setBlogs } from '@/redux/BlogSlice'
 
 const ViewBlogs = () => {
-  const [blogs, setBlogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
-
+  const dispatch = useDispatch();
+  const blogs = useSelector(state => state.blogs.blogs) || []; // Access the blogs from the store state
   useEffect(() => {
     fetchBlogs()
   }, [page])
@@ -26,9 +28,9 @@ const ViewBlogs = () => {
       
       if (response.data.success) {
         if (page === 1) {
-          setBlogs(response.data.data)
+          dispatch(setBlogs(response.data.data)) // Dispatch the action to set the blogs in the store
         } else {
-          setBlogs(prev => [...prev, ...response.data.data])
+          dispatch(setBlogs(prev => [...prev, ...response.data.data])) // Dispatch the action to add the new blogs to the existing ones in the store
         }
         setHasMore(response.data.data.length === 9)
       } else {
@@ -60,7 +62,7 @@ const ViewBlogs = () => {
     )
   }
 
-  console.log(blogs[0]?.author?.firstName);
+  console.log(blogs);
 
 
   const handleLoadMore = () => {
@@ -121,7 +123,7 @@ const ViewBlogs = () => {
               </div>
 
               <Link 
-                to={`/blog/${blog._id}`}
+                to={`/viewBlog/${blog._id}`}
                 className="mt-4 inline-block bg-primary text-primary-foreground px-4 py-2 rounded cursor-pointer hover:bg-primary/90 transition-colors"
               >
                 Read More

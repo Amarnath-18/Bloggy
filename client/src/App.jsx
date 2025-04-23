@@ -10,6 +10,7 @@ import Body from './components/Body'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import ProtectedRoute from './components/ProtectedRoute'
+import ViewSingleBlog from './components/ViewSingleBlog'
 
 const App = () => {
   return (
@@ -55,6 +56,7 @@ const App = () => {
                 <SignUp/>
             } 
           />
+          <Route path='/viewBlog/:id' element={<ViewSingleBlog/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
